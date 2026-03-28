@@ -85,7 +85,6 @@ body {
 .ghost-preview {
   opacity: 0.5 !important;
   transform: scale(0.9);
-  pointer-events: none;
 }
 
 .grid-cell.clearing {

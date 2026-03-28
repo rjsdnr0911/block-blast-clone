@@ -18,10 +18,6 @@ export const Grid: React.FC<GridProps> = ({ grid, onCellDrop, draggingBlockInfo,
     setHoverCell({ r: rIdx, c: cIdx });
   };
 
-  const handleDragLeave = () => {
-    setHoverCell(null);
-  };
-
   const handleDrop = (e: React.DragEvent, row: number, col: number) => {
     e.preventDefault();
     setHoverCell(null);
@@ -65,7 +61,7 @@ export const Grid: React.FC<GridProps> = ({ grid, onCellDrop, draggingBlockInfo,
   }
 
   return (
-    <div className="game-grid" onDragLeave={handleDragLeave} onMouseLeave={handleDragLeave}>
+    <div className="game-grid">
       {grid.map((rowArr, rIdx) => 
         rowArr.map((cellColor, cIdx) => {
           const isGhost = ghostCells.find(g => g.r === rIdx && g.c === cIdx);
