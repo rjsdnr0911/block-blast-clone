@@ -3,23 +3,30 @@ import { ThemeType } from '../context/ThemeContext';
 
 const MOCK_URL = 'data:audio/mp3;base64,//NExAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq';
 
+const getPath = (path: string) => {
+  if (path.startsWith('data:')) return path;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const base = (import.meta as any).env.BASE_URL || '/';
+  return `${base}${path.replace(/^\//, '')}`;
+};
+
 const SOUNDS: Record<string, Partial<Record<string, Howl>>> = {
   default: {
-    drop: new Howl({ src: ['/sounds/drop.m4a'], volume: 1.0 }), 
-    clear_single: new Howl({ src: [MOCK_URL], volume: 0.8 }),
+    drop: new Howl({ src: [getPath('/sounds/drop.m4a')], volume: 1.0 }), 
+    clear_single: new Howl({ src: [getPath(MOCK_URL)], volume: 0.8 }),
   },
   nature: {
-    drop: new Howl({ src: ['/sounds/drop.m4a'], volume: 1.0 }),
-    clear_single: new Howl({ src: [MOCK_URL], volume: 0.8 }),
+    drop: new Howl({ src: [getPath('/sounds/drop.m4a')], volume: 1.0 }),
+    clear_single: new Howl({ src: [getPath(MOCK_URL)], volume: 0.8 }),
   },
   keyboard: {
-    drop: new Howl({ src: ['/sounds/drop.m4a'], volume: 1.0 }),
-    clear_single: new Howl({ src: [MOCK_URL], volume: 0.8 }),
+    drop: new Howl({ src: [getPath('/sounds/drop.m4a')], volume: 1.0 }),
+    clear_single: new Howl({ src: [getPath(MOCK_URL)], volume: 0.8 }),
   },
   minerals: {
-    drop: new Howl({ src: ['/sounds/pebble_drop.wav'], volume: 1.0 }),
-    clear_single: new Howl({ src: ['/sounds/pebble_clear_single.wav'], volume: 1.0 }),
-    clear_all: new Howl({ src: ['/sounds/pebble_clear_all.wav'], volume: 1.0 }),
+    drop: new Howl({ src: [getPath('/sounds/pebble_drop.wav')], volume: 1.0 }),
+    clear_single: new Howl({ src: [getPath('/sounds/pebble_clear_single.wav')], volume: 1.0 }),
+    clear_all: new Howl({ src: [getPath('/sounds/pebble_clear_all.wav')], volume: 1.0 }),
   }
 };
 
