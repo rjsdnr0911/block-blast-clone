@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useGameEngine } from './hooks/useGameEngine';
 import { Grid } from './components/Grid';
 import { BlockTray } from './components/BlockTray';
@@ -6,15 +6,18 @@ import { useTheme, ThemeType } from './context/ThemeContext';
 import './index.css';
 
 const App: React.FC = () => {
-  const { grid, trayBlocks, score, highScore, combo, gameOver, canPlaceBlock, placeBlock, resetGame } = useGameEngine();
+  const { grid, trayBlocks, score, highScore, combo, gameOver, getValidPlacement, placeBlock, resetGame } = useGameEngine();
   const { currentTheme, setTheme } = useTheme();
+
+  const [draggingBlockInfo, setDraggingBlockInfo] = useState<{ trayIndex: number, grabR: number, grabC: number } | null>(null);
 
   const handleCellDrop = (row: number, col: number, trayIndex: number) => {
     placeBlock(trayIndex, row, col);
+    setDraggingBlockInfo(null);
   };
 
   return (
-    <div className="app-container">
+    <div className="app-container" onDragEnd={() => setDraggingBlockInfo(null)}>
       <div className="game-header">
         <h1>Block Blast Neo</h1>
         <select 
@@ -41,8 +44,17 @@ const App: React.FC = () => {
         </div>
       )}
 
-      <Grid grid={grid} onCellDrop={handleCellDrop} />
-      <BlockTray blocks={trayBlocks} />
+      <Grid 
+        grid={grid} 
+        onCellDrop={handleCellDrop} 
+        draggingBlockInfo={draggingBlockInfo}
+        trayBlocks={trayBlocks}
+        getValidPlacement={getValidPlacement}
+      />
+      <BlockTray 
+        blocks={trayBlocks} 
+        onDragStartInfo={setDraggingBlockInfo}
+      />
     </div>
   );
 };

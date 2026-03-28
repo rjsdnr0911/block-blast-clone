@@ -99,11 +99,32 @@ export function useGameEngine() {
     return true;
   }, []);
 
-  const placeBlock = (trayIndex: number, row: number, col: number): boolean => {
+  const getValidPlacement = useCallback((block: BlockDef, row: number, col: number, currentGrid: GridCell[][]) => {
+    // Snap preference: Exact, then Cardinal, then Diagonal
+    const offsets = [
+      [0, 0],
+      [-1, 0], [1, 0], [0, -1], [0, 1],
+      [-1, -1], [-1, 1], [1, -1], [1, 1],
+      // Extended snap range (optional, 2 units)
+      [-2, 0], [2, 0], [0, -2], [0, 2]
+    ];
+    
+    for (const [dr, dc] of offsets) {
+      if (canPlaceBlock(block, row + dr, col + dc, currentGrid)) {
+        return { r: row + dr, c: col + dc };
+      }
+    }
+    return null;
+  }, [canPlaceBlock]);
+
+  const placeBlock = (trayIndex: number, rawRow: number, rawCol: number): boolean => {
     const block = trayBlocks[trayIndex];
     if (!block) return false;
 
-    if (!canPlaceBlock(block, row, col, grid)) return false;
+    const placement = getValidPlacement(block, rawRow, rawCol, grid);
+    if (!placement) return false;
+
+    const { r: row, c: col } = placement;
 
     // Place block
     let newGrid = grid.map(r => [...r]);
@@ -180,6 +201,7 @@ export function useGameEngine() {
     combo,
     gameOver,
     canPlaceBlock,
+    getValidPlacement,
     placeBlock,
     resetGame: () => {
       setGrid(createEmptyGrid());

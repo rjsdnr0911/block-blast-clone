@@ -1,0 +1,5 @@
+
+> block-blast-clone@0.0.0 build
+> tsc && vite build
+
+src/main.tsx(3,17): error TS5097: An import path can only end with a '.tsx' extension when 'allowImportingTsExtensions' is enabled.
