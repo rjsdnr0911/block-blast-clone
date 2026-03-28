@@ -13,6 +13,11 @@
   --bg-orange: #ff9933;
 
   --text-main: #e2e2e8;
+
+  /* Dimensions */
+  --grid-cell-size: 45px;
+  --block-cell-size: 38px;
+  --gap-size: 4px;
 }
 
 body {
@@ -66,9 +71,9 @@ body {
 
 .game-grid {
   display: grid;
-  grid-template-columns: repeat(8, 45px);
-  grid-template-rows: repeat(8, 45px);
-  gap: 4px;
+  grid-template-columns: repeat(8, var(--grid-cell-size));
+  grid-template-rows: repeat(8, var(--grid-cell-size));
+  gap: var(--gap-size);
   background: var(--surface);
   padding: 10px;
   border-radius: 12px;
@@ -76,8 +81,8 @@ body {
 }
 
 .grid-cell {
-  width: 45px;
-  height: 45px;
+  width: var(--grid-cell-size);
+  height: var(--grid-cell-size);
   background: rgba(255, 255, 255, 0.05);
   border-radius: 8px;
   transition: background 0.2s, box-shadow 0.2s, transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
@@ -136,7 +141,7 @@ body {
 .draggable-block {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--gap-size);
   cursor: grab;
   transition: transform 0.1s;
 }
@@ -148,12 +153,12 @@ body {
 
 .block-row {
   display: flex;
-  gap: 4px;
+  gap: var(--gap-size);
 }
 
 .block-cell {
-  width: 38px;
-  height: 38px;
+  width: var(--block-cell-size);
+  height: var(--block-cell-size);
   border-radius: 6px;
 }
 
@@ -321,3 +326,31 @@ body.theme-minerals .grid-cell.clearing {
 .drag-overlay { position: fixed; pointer-events: none; z-index: 9999; }
 .drag-overlay-block { transform: scale(1.1); filter: drop-shadow(0 15px 25px rgba(0,0,0,0.5)); transition: transform 0.1s ease; }
 .tray-slot.dragging .draggable-block { opacity: 0; }
+
+/* Mobile Responsive */
+@media (max-width: 500px), (max-height: 850px) {
+  :root {
+    --grid-cell-size: 38px;
+    --block-cell-size: 30px;
+    --gap-size: 3px;
+  }
+  .app-container { padding: 1rem; gap: 1rem; }
+  .game-header h1 { font-size: 2rem; }
+  .block-tray { gap: 1rem; min-height: 110px; padding: 0.5rem; }
+  .tray-slot { width: 100px; height: 100px; }
+}
+
+@media (max-width: 380px), (max-height: 700px) {
+  :root {
+    --grid-cell-size: 34px;
+    --block-cell-size: 26px;
+    --gap-size: 2px;
+  }
+  .game-header h1 { font-size: 1.8rem; }
+  .score-board h2 { font-size: 1.2rem; }
+  .block-tray { gap: 0.5rem; }
+  .tray-slot { width: 90px; height: 90px; }
+}
+
+.fullscreen-btn { position: absolute; top: 1rem; right: 1rem; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 8px; color: var(--text-main); font-size: 1.5rem; width: 40px; height: 40px; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: all 0.2s; z-index: 100; }
+.fullscreen-btn:hover { background: rgba(255, 255, 255, 0.2); transform: scale(1.05); }

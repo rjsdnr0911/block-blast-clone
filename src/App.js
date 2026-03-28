@@ -22,8 +22,9 @@ const App = () => {
         if (!draggingBlockInfo)
             return;
         setPointerPos({ x: e.clientX, y: e.clientY });
-        // Find grid cell under pointer
-        const element = document.elementFromPoint(e.clientX, e.clientY);
+        // Offset the hit-test point by -60px Y to match the top-offset of the visual block, 
+        // so the ghost preview aligns exactly with the drag overlay hovering above the finger.
+        const element = document.elementFromPoint(e.clientX, e.clientY - 60);
         const gridCell = element?.closest('.grid-cell');
         if (gridCell) {
             const r = parseInt(gridCell.getAttribute('data-row') || '-1', 10);
@@ -61,6 +62,20 @@ const App = () => {
         setShowGameOverModal(false);
         resetGame();
     };
-    return (_jsxs("div", { className: "app-container", onPointerMove: handlePointerMove, onPointerUp: handlePointerUp, onPointerCancel: handlePointerUp, children: [_jsxs("div", { className: "game-header", children: [_jsx("h1", { children: "Block Drop" }), _jsxs("div", { className: "score-board", children: [_jsxs("h2", { children: ["Score: ", score] }), _jsxs("h2", { children: ["High Score: ", highScore] }), _jsxs("h3", { children: ["Combo: ", combo > 1 ? `${combo}x` : '-'] })] })] }), showGameOverModal && (_jsxs("div", { className: "game-over-modal", children: [_jsx("h2", { children: "Game Over" }), _jsx("button", { onClick: handleResetGame, children: "Play Again" })] })), _jsx(Grid, { grid: grid, hoverCell: hoverCell, draggingBlockInfo: draggingBlockInfo, trayBlocks: trayBlocks, getValidPlacement: getValidPlacement, gameOver: gameOver, onGameOverAnimationComplete: () => setShowGameOverModal(true) }), _jsx(BlockTray, { blocks: trayBlocks, onPointerDownBlock: handlePointerDownBlock, draggingBlockInfo: draggingBlockInfo }), draggingBlockInfo && pointerPos && trayBlocks[draggingBlockInfo.trayIndex] && (_jsx("div", { className: "drag-overlay drag-overlay-block", style: { left: pointerPos.x, top: pointerPos.y }, children: trayBlocks[draggingBlockInfo.trayIndex].shape.map((row, rIdx) => (_jsx("div", { className: "block-row", children: row.map((val, cIdx) => (_jsx("div", { className: `block-cell ${val ? `bg-${trayBlocks[draggingBlockInfo.trayIndex].color}` : 'empty'}` }, cIdx))) }, rIdx))) }))] }));
+    const toggleFullscreen = () => {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch((err) => {
+                console.log(`Error attempting to enable fullscreen: ${err.message}`);
+            });
+        }
+        else {
+            document.exitFullscreen();
+        }
+    };
+    return (_jsxs("div", { className: "app-container", onPointerMove: handlePointerMove, onPointerUp: handlePointerUp, onPointerCancel: handlePointerUp, children: [_jsxs("div", { className: "game-header", children: [_jsx("h1", { children: "Block Drop" }), _jsx("button", { className: "fullscreen-btn", onClick: toggleFullscreen, "aria-label": "Toggle Fullscreen", children: "\u26F6" }), _jsxs("div", { className: "score-board", children: [_jsxs("h2", { children: ["Score: ", score] }), _jsxs("h2", { children: ["High Score: ", highScore] }), _jsxs("h3", { children: ["Combo: ", combo > 1 ? `${combo}x` : '-'] })] })] }), showGameOverModal && (_jsxs("div", { className: "game-over-modal", children: [_jsx("h2", { children: "Game Over" }), _jsx("button", { onClick: handleResetGame, children: "Play Again" })] })), _jsx(Grid, { grid: grid, hoverCell: hoverCell, draggingBlockInfo: draggingBlockInfo, trayBlocks: trayBlocks, getValidPlacement: getValidPlacement, gameOver: gameOver, onGameOverAnimationComplete: () => setShowGameOverModal(true) }), _jsx(BlockTray, { blocks: trayBlocks, onPointerDownBlock: handlePointerDownBlock, draggingBlockInfo: draggingBlockInfo }), draggingBlockInfo && pointerPos && trayBlocks[draggingBlockInfo.trayIndex] && (_jsx("div", { className: "drag-overlay drag-overlay-block", style: {
+                    left: pointerPos.x,
+                    top: pointerPos.y,
+                    transform: `translate(calc(-1 * (${draggingBlockInfo.grabC} * (var(--block-cell-size) + var(--gap-size)) + (var(--block-cell-size) / 2))), calc(-1 * (${draggingBlockInfo.grabR} * (var(--block-cell-size) + var(--gap-size)) + (var(--block-cell-size) / 2) + 60px))) scale(1.1)`
+                }, children: trayBlocks[draggingBlockInfo.trayIndex].shape.map((row, rIdx) => (_jsx("div", { className: "block-row", children: row.map((val, cIdx) => (_jsx("div", { className: `block-cell ${val ? `bg-${trayBlocks[draggingBlockInfo.trayIndex].color}` : 'empty'}` }, cIdx))) }, rIdx))) }))] }));
 };
 export default App;

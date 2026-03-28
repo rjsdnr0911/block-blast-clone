@@ -67,6 +67,16 @@ const App: React.FC = () => {
     resetGame();
   };
 
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch((err) => {
+        console.log(`Error attempting to enable fullscreen: ${err.message}`);
+      });
+    } else {
+      document.exitFullscreen();
+    }
+  };
+
   return (
     <div 
       className="app-container" 
@@ -76,6 +86,9 @@ const App: React.FC = () => {
     >
       <div className="game-header">
         <h1>Block Drop</h1>
+        <button className="fullscreen-btn" onClick={toggleFullscreen} aria-label="Toggle Fullscreen">
+          ⛶
+        </button>
 
         <div className="score-board">
           <h2>Score: {score}</h2>
@@ -112,7 +125,7 @@ const App: React.FC = () => {
           style={{ 
             left: pointerPos.x, 
             top: pointerPos.y,
-            transform: `translate(calc(-${(draggingBlockInfo.grabC * 34) + 17}px), calc(-${(draggingBlockInfo.grabR * 34) + 17 + 60}px)) scale(1.1)`
+            transform: `translate(calc(-1 * (${draggingBlockInfo.grabC} * (var(--block-cell-size) + var(--gap-size)) + (var(--block-cell-size) / 2))), calc(-1 * (${draggingBlockInfo.grabR} * (var(--block-cell-size) + var(--gap-size)) + (var(--block-cell-size) / 2) + 60px))) scale(1.1)`
           }}
         >
           {trayBlocks[draggingBlockInfo.trayIndex]!.shape.map((row, rIdx) => (
