@@ -4,7 +4,7 @@ import { BlockDef } from '../utils/shapes';
 
 interface GridProps {
   grid: GridCell[][];
-  onCellDrop: (row: number, col: number, trayIndex: number) => void;
+  hoverCell?: { r: number, c: number } | null;
   draggingBlockInfo?: { trayIndex: number; grabR: number; grabC: number; } | null;
   trayBlocks?: (BlockDef | null)[];
   getValidPlacement?: (block: BlockDef, row: number, col: number, currentGrid: GridCell[][]) => { r: number, c: number } | null;
@@ -12,8 +12,9 @@ interface GridProps {
   onGameOverAnimationComplete?: () => void;
 }
 
-export const Grid: React.FC<GridProps> = ({ grid, onCellDrop, draggingBlockInfo, trayBlocks, getValidPlacement, gameOver, onGameOverAnimationComplete }) => {
-  const [hoverCell, setHoverCell] = useState<{ r: number, c: number } | null>(null);
+export const Grid: React.FC<GridProps> = ({ 
+  grid, hoverCell, draggingBlockInfo, trayBlocks, getValidPlacement, gameOver, onGameOverAnimationComplete 
+}) => {
   const [cascadeGrid, setCascadeGrid] = useState<GridCell[][] | null>(null);
 
   useEffect(() => {
@@ -43,29 +44,6 @@ export const Grid: React.FC<GridProps> = ({ grid, onCellDrop, draggingBlockInfo,
       setCascadeGrid(null);
     }
   }, [gameOver, grid, onGameOverAnimationComplete]);
-
-  const handleDragOver = (e: React.DragEvent, rIdx: number, cIdx: number) => {
-    e.preventDefault();
-    setHoverCell({ r: rIdx, c: cIdx });
-  };
-
-  const handleDrop = (e: React.DragEvent, row: number, col: number) => {
-    e.preventDefault();
-    setHoverCell(null);
-    const dataStr = e.dataTransfer.getData('text/plain');
-    try {
-      const data = JSON.parse(dataStr);
-      if (data && typeof data.trayIndex === 'number') {
-        onCellDrop(row - data.grabR, col - data.grabC, data.trayIndex);
-      }
-    } catch {
-      // Fallback
-      const trayIndex = parseInt(dataStr, 10);
-      if (!isNaN(trayIndex)) {
-        onCellDrop(row, col, trayIndex);
-      }
-    }
-  };
 
   // Calculate ghost cells
   let ghostCells: { r: number, c: number, color: string }[] = [];
@@ -127,7 +105,7 @@ export const Grid: React.FC<GridProps> = ({ grid, onCellDrop, draggingBlockInfo,
   const displayGrid = cascadeGrid || grid;
 
   return (
-    <div className="game-grid" onMouseLeave={() => setHoverCell(null)}>
+    <div className="game-grid">
       {displayGrid.map((rowArr, rIdx) => 
         rowArr.map((cellColor, cIdx) => {
           const isGhost = (!cascadeGrid) && ghostCells.find(g => g.r === rIdx && g.c === cIdx);
@@ -143,8 +121,8 @@ export const Grid: React.FC<GridProps> = ({ grid, onCellDrop, draggingBlockInfo,
             <div 
               key={`${rIdx}-${cIdx}`}
               className={`grid-cell ${bgClass} ${ghostClass} ${clearingClass}`}
-              onDragOver={(e) => handleDragOver(e, rIdx, cIdx)}
-              onDrop={(e) => handleDrop(e, rIdx, cIdx)}
+              data-row={rIdx}
+              data-col={cIdx}
             />
           );
         })
