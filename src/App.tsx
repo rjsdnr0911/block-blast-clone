@@ -25,7 +25,7 @@ const App: React.FC = () => {
   return (
     <div className="app-container" onDragEnd={() => setDraggingBlockInfo(null)}>
       <div className="game-header">
-        <h1>Block Blast Neo</h1>
+        <h1>Block Drop</h1>
 
         <div className="score-board">
           <h2>Score: {score}</h2>
