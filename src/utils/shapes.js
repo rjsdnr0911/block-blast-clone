@@ -1,4 +1,6 @@
 export const BLOCKS = {
+    // 1x1
+    'dot': { id: 'dot', color: 'cyan', shape: [[1]] },
     // Lines (1~5 길이를 가진 일자 블록)
     'h2': { id: 'h2', color: 'green', shape: [[1, 1]] },
     'v2': { id: 'v2', color: 'green', shape: [[1], [1]] },

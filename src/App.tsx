@@ -10,10 +10,16 @@ const App: React.FC = () => {
   const { currentTheme, setTheme } = useTheme();
 
   const [draggingBlockInfo, setDraggingBlockInfo] = useState<{ trayIndex: number, grabR: number, grabC: number } | null>(null);
+  const [showGameOverModal, setShowGameOverModal] = useState(false);
 
   const handleCellDrop = (row: number, col: number, trayIndex: number) => {
     placeBlock(trayIndex, row, col);
     setDraggingBlockInfo(null);
+  };
+
+  const handleResetGame = () => {
+    setShowGameOverModal(false);
+    resetGame();
   };
 
   return (
@@ -37,10 +43,10 @@ const App: React.FC = () => {
         </div>
       </div>
       
-      {gameOver && (
+      {showGameOverModal && (
         <div className="game-over-modal">
           <h2>Game Over</h2>
-          <button onClick={resetGame}>Play Again</button>
+          <button onClick={handleResetGame}>Play Again</button>
         </div>
       )}
 
@@ -50,6 +56,8 @@ const App: React.FC = () => {
         draggingBlockInfo={draggingBlockInfo}
         trayBlocks={trayBlocks}
         getValidPlacement={getValidPlacement}
+        gameOver={gameOver}
+        onGameOverAnimationComplete={() => setShowGameOverModal(true)}
       />
       <BlockTray 
         blocks={trayBlocks} 
