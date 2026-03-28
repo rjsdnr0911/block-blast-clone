@@ -1,12 +1,13 @@
 import { useState, useCallback, useEffect } from 'react';
-import { getRandomBlocks } from '../utils/shapes';
+import { getAdaptiveBlocks } from '../utils/shapes';
 import { useTheme } from '../context/ThemeContext';
 import { playSound } from '../utils/audio';
 export const GRID_SIZE = 8;
 export const createEmptyGrid = () => Array.from({ length: GRID_SIZE }, () => Array(GRID_SIZE).fill(null));
+const initialGameGrid = createEmptyGrid();
 export function useGameEngine() {
-    const [grid, setGrid] = useState(createEmptyGrid());
-    const [trayBlocks, setTrayBlocks] = useState(getRandomBlocks(3));
+    const [grid, setGrid] = useState(initialGameGrid);
+    const [trayBlocks, setTrayBlocks] = useState(getAdaptiveBlocks(3, initialGameGrid));
     const [score, setScore] = useState(0);
     const [highScore, setHighScore] = useState(() => {
         const saved = localStorage.getItem('blockBlastHighScore');
@@ -152,7 +153,7 @@ export function useGameEngine() {
             setTimeout(() => playSound(currentTheme, clearAction), 150);
         }
         if (newTray.every(b => b === null)) {
-            setTrayBlocks(getRandomBlocks(3));
+            setTrayBlocks(getAdaptiveBlocks(3, processedGrid));
         }
         else {
             setTrayBlocks(newTray);
@@ -181,8 +182,9 @@ export function useGameEngine() {
         getValidPlacement,
         placeBlock,
         resetGame: () => {
-            setGrid(createEmptyGrid());
-            setTrayBlocks(getRandomBlocks(3));
+            const emptyGrid = createEmptyGrid();
+            setGrid(emptyGrid);
+            setTrayBlocks(getAdaptiveBlocks(3, emptyGrid));
             setScore(0);
             setCombo(0);
             setGameOver(false);
