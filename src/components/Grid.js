@@ -6,9 +6,6 @@ export const Grid = ({ grid, onCellDrop, draggingBlockInfo, trayBlocks, getValid
         e.preventDefault();
         setHoverCell({ r: rIdx, c: cIdx });
     };
-    const handleDragLeave = () => {
-        setHoverCell(null);
-    };
     const handleDrop = (e, row, col) => {
         e.preventDefault();
         setHoverCell(null);
@@ -50,7 +47,7 @@ export const Grid = ({ grid, onCellDrop, draggingBlockInfo, trayBlocks, getValid
             }
         }
     }
-    return (_jsx("div", { className: "game-grid", onDragLeave: handleDragLeave, onMouseLeave: handleDragLeave, children: grid.map((rowArr, rIdx) => rowArr.map((cellColor, cIdx) => {
+    return (_jsx("div", { className: "game-grid", children: grid.map((rowArr, rIdx) => rowArr.map((cellColor, cIdx) => {
             const isGhost = ghostCells.find(g => g.r === rIdx && g.c === cIdx);
             const drawGhost = isGhost && !cellColor;
             const ghostClass = drawGhost ? `bg-${isGhost.color} ghost-preview` : '';

@@ -126,7 +126,11 @@ export function useGameEngine() {
         if (linesCleared > 0) {
             const newCombo = combo + 1;
             setCombo(newCombo);
-            earnedScore += (linesCleared * 100) * newCombo;
+            // FAQ Scoring Rule: Base 100, Multi-line extra 200 per additional line
+            // Combo: +50% per consecutive clear (1x -> 1.5x -> 2x)
+            const lineScore = (linesCleared * 100) + (linesCleared > 1 ? (linesCleared - 1) * 200 : 0);
+            const comboMultiplier = 1 + ((newCombo - 1) * 0.5);
+            earnedScore += Math.floor(lineScore * comboMultiplier);
         }
         else {
             setCombo(0);
