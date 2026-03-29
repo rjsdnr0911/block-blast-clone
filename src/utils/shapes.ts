@@ -72,7 +72,8 @@ export const isBlockPlaceable = (block: BlockDef, grid: GridCell[][]): boolean =
       let canPlace = true;
       for (let br = 0; br < block.shape.length; br++) {
         for (let bc = 0; bc < block.shape[br].length; bc++) {
-          if (block.shape[br][bc] === 1 && grid[r + br][c + bc] !== null) {
+          const cell = grid[r + br][c + bc];
+          if (block.shape[br][bc] === 1 && cell !== null && !(cell.endsWith('_clearing'))) {
             canPlace = false;
             break;
           }

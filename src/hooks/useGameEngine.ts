@@ -28,10 +28,16 @@ export function useGameEngine() {
     const activeBlocks = currentTray.filter(b => b !== null) as BlockDef[];
     if (activeBlocks.length === 0) return false;
 
+    // Simulate the grid after clearing animation completes:
+    // Treat all _clearing cells as empty (null)
+    const simulatedGrid = currentGrid.map(row =>
+      row.map(cell => (cell && cell.endsWith('_clearing') ? null : cell))
+    );
+
     for (const block of activeBlocks) {
       for (let r = 0; r < GRID_SIZE; r++) {
         for (let c = 0; c < GRID_SIZE; c++) {
-          if (canPlaceBlock(block, r, c, currentGrid)) {
+          if (canPlaceBlock(block, r, c, simulatedGrid)) {
             return false;
           }
         }
@@ -189,6 +195,18 @@ export function useGameEngine() {
   };
 
   useEffect(() => {
+    // Check if there are any cells still in clearing animation
+    const hasClearingCells = grid.some(row => row.some(cell => cell && cell.endsWith('_clearing')));
+    
+    if (hasClearingCells) {
+      // Wait for clearing animation to finish before checking game over
+      const timer = setTimeout(() => {
+        // Re-read grid state is not possible here, so we skip;
+        // The effect will re-trigger after the clearing setTimeout sets cells to null
+      }, 350);
+      return () => clearTimeout(timer);
+    }
+    
     if (checkGameOver(grid, trayBlocks)) {
       setGameOver(true);
     }
